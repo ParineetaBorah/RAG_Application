@@ -18,7 +18,7 @@ def test_health_endpoint():
 def test_health_endpoint_method():
     """Test /health only accepts GET"""
     response = client.post("/health")
-    assert response.status_code == 405  # Method not allowed
+    assert response.status_code == 405
 
 
 @patch("api.rag.answer")
@@ -26,7 +26,6 @@ def test_chat_answer_endpoint_success(mock_rag_answer):
     """Test /chat/answer endpoint with successful response"""
     from src.models import AnswerResponse, AnswerContent, Media
 
-    # Mock SimpleRAG answer - return actual AnswerResponse object
     mock_response = AnswerResponse(
         mode="answer",
         answer=AnswerContent(
@@ -41,7 +40,6 @@ def test_chat_answer_endpoint_success(mock_rag_answer):
     )
     mock_rag_answer.return_value = mock_response
 
-    # Test endpoint
     response = client.post(
         "/chat/answer", json={"question": "What are fire safety requirements?"}
     )
@@ -59,7 +57,6 @@ def test_chat_answer_endpoint_no_context(mock_rag_answer):
     """Test /chat/answer when no relevant context found"""
     from src.models import AnswerResponse, AnswerContent, Media
 
-    # Mock SimpleRAG answer for no context scenario
     mock_response = AnswerResponse(
         mode="answer",
         answer=AnswerContent(
@@ -86,7 +83,7 @@ def test_chat_answer_endpoint_no_context(mock_rag_answer):
 def test_chat_answer_missing_question():
     """Test /chat/answer with missing question field"""
     response = client.post("/chat/answer", json={})
-    assert response.status_code == 422  # Validation error
+    assert response.status_code == 422
 
 
 def test_chat_answer_invalid_json():

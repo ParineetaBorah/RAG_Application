@@ -72,6 +72,10 @@ class AnswerGenerator:
     def generate(self, query, context, pages, media_files):
         """Generate structured, validated answer."""
 
+        from .logger import logger
+
+        generation_start = time.time()
+
         if not query.strip():
             raise ValueError("Query cannot be empty")
 
@@ -132,5 +136,8 @@ class AnswerGenerator:
 
         # Pydantic validation with cleaned references
         validated = AnswerResponse(**cleaned_result)
+
+        generation_time = int((time.time() - generation_start) * 1000)
+        logger.info(f"Generation completed in {generation_time}ms")
 
         return validated

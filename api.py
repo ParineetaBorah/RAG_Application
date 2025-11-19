@@ -93,8 +93,8 @@ def answer_endpoint(request: QueryRequest):
         # Calculate total latency
         total_latency = int((time.time() - start_time) * 1000)
 
-        # Log timing
-        logger.info(f"Request completed - Total: {total_latency}ms")
+        # Log timing breakdown
+        logger.info(f"Request completed - Total latency: {total_latency}ms")
 
         # Add latency to response
         result.latency_ms = total_latency

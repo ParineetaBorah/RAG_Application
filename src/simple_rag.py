@@ -1,5 +1,6 @@
 """End-to-end RAG pipeline"""
 
+import time
 from .logger import logger
 from .vector_store import VectorStoreManager
 from .reranker import LlamaReranker
@@ -27,6 +28,8 @@ class SimpleRAG:
 
     def retrieve(self, query: str):
         """Hybrid retrieval + LLM reranking -> top_k contexts."""
+
+        retrieval_start = time.time()
 
         # 1. Get FAISS + BM25 candidates
         faiss_store, chunks = self.store.load_index_and_metadata()
@@ -86,6 +89,9 @@ class SimpleRAG:
         if len(images) > 25:
             logger.warning(f"Too many diagrams ({len(images)}), limiting to 25")
             images = images[:25]
+
+        retrieval_time = int((time.time() - retrieval_start) * 1000)
+        logger.info(f"Retrieval completed in {retrieval_time}ms")
 
         return context, pages, images
 

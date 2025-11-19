@@ -108,7 +108,6 @@ class TestOutputGuardrails:
             "media": {"images": ["Diagram D6", "/media/Diagram D6.png"]},
         }
 
-        # Should not raise in lenient mode
         validate_output(answer, [], [], strict=False)
 
     def test_answer_too_long(self):
@@ -117,7 +116,7 @@ class TestOutputGuardrails:
             "mode": "answer",
             "answer": {
                 "title": "Test Answer Title",
-                "summary": "A" * 3000,  # Too long (over 2000 chars)
+                "summary": "A" * 3000,
                 "steps": [],
                 "verification": [],
             },
@@ -135,7 +134,7 @@ class TestOutputGuardrails:
             "answer": {
                 "title": "Test Answer Title",
                 "summary": "This is a valid summary text",
-                "steps": ["Step"] * 15,  # Too many (over 10 steps)
+                "steps": ["Step"] * 15,
                 "verification": [],
             },
             "links": [],
@@ -150,7 +149,7 @@ class TestOutputGuardrails:
         answer = {
             "mode": "answer",
             "answer": {
-                "title": "",  # Empty
+                "title": "",
                 "summary": "Summary text here",
                 "steps": [],
                 "verification": [],
@@ -170,7 +169,7 @@ class TestContextGuardrails:
         """Test valid context passes"""
         context = "Regulations require proper exits and signage." * 10
         result = validate_context(context)
-        assert result == context  # Should return sanitized context
+        assert result == context
 
     def test_empty_context_rejected(self):
         """Test empty context is rejected"""
@@ -196,7 +195,7 @@ class TestMainFunctions:
     def test_validate_input_raises(self):
         """Test validate_input raises on violation"""
         with pytest.raises(GuardrailViolation):
-            validate_input("AB")  # Too short
+            validate_input("AB")
 
     def test_validate_output_function(self):
         """Test validate_output main function"""
@@ -217,5 +216,5 @@ class TestMainFunctions:
         """Test validate_context main function"""
         context = "Context text here" * 10
         result = validate_context(context)
-        assert result  # Should return sanitized context
+        assert result
         assert isinstance(result, str)
