@@ -183,7 +183,7 @@ class PDFProcessor:
             embedded_imgs = self.extract_embedded_images(doc, page, page_num)
             tables = self.extract_tables_from_page(pdf_path, page_num)
 
-            # 1️⃣ Convert tables to markdown chunks
+            # Convert tables to markdown chunks
             for t in tables:
                 md_table = self.table_to_markdown(t)
 
@@ -197,13 +197,13 @@ class PDFProcessor:
                     )
                 )
 
-            # 2️⃣ Extract text from page
+            # Extract text from page
             raw_text = page.get_text("text") or ""
 
-            # 3️⃣ Generate chunks using LangChain splitter
+            # Generate chunks using LangChain splitter
             text_chunks = self.splitter.split_text(raw_text)
 
-            # 4️⃣ Add each text chunk with metadata
+            # Add each text chunk with metadata
             for ch in text_chunks:
                 all_chunks.append(
                     self.build_chunk_record(
