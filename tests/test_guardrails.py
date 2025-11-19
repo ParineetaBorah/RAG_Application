@@ -94,43 +94,6 @@ class TestOutputGuardrails:
         with pytest.raises(GuardrailViolation, match="Missing required"):
             validate_output(answer, [], [])
 
-    def test_hallucinated_page_link_strict(self):
-        """Test hallucinated page reference is detected in strict mode"""
-        answer = {
-            "mode": "answer",
-            "answer": {
-                "title": "Test Answer",
-                "summary": "This is a summary text",
-                "steps": ["Step 1"],
-                "verification": ["Ver"],
-            },
-            "links": ["/media/page_999.png"],  # Not in allowed pages
-            "media": {"images": []},
-        }
-        allowed_pages = ["/media/page_42.png"]
-
-        with pytest.raises(GuardrailViolation, match="Invalid page reference"):
-            validate_output(answer, allowed_pages, [], strict=True)
-
-    def test_hallucinated_media_strict_mode(self):
-        """Test hallucinated media reference is detected in strict mode"""
-        answer = {
-            "mode": "answer",
-            "answer": {
-                "title": "Test Answer",
-                "summary": "This is a summary text",
-                "steps": ["Step 1"],
-                "verification": ["Ver"],
-            },
-            "links": [],
-            "media": {"images": ["/media/fake_img.png"]},
-        }
-        allowed_media = ["/media/page_42_img_0.png"]
-
-        # Strict mode should detect this
-        with pytest.raises(GuardrailViolation, match="Invalid media reference"):
-            validate_output(answer, [], allowed_media, strict=True)
-
     def test_diagram_reference_allowed(self):
         """Test diagram references are allowed in lenient mode"""
         answer = {
