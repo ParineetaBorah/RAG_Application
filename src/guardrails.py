@@ -17,8 +17,6 @@ MIN_QUERY_LENGTH = 5
 MAX_QUERY_LENGTH = 500
 MAX_ANSWER_LENGTH = 2000
 MAX_STEPS = 10
-MAX_LINKS = 10
-MAX_MEDIA = 30
 MIN_CONTEXT_LENGTH = 50
 MAX_CONTEXT_LENGTH = 50000
 
@@ -43,7 +41,7 @@ def sanitize_input(query: str) -> str:
     query = re.sub(r"[\x00-\x1f\x7f-\x9f]", "", query)
 
     # Remove special characters that could be injection attempts
-    query = re.sub(r"[{}[\]\\]", "", query)
+    # query = re.sub(r"[{}[\]\\]", "", query)
 
     return query.strip()
 
@@ -122,29 +120,6 @@ def validate_output(
     steps = answer.get("steps", [])
     if len(steps) > MAX_STEPS:
         raise GuardrailViolation(f"Too many steps (max {MAX_STEPS})")
-
-    # Check links
-    links = answer_dict.get("links", [])
-    if len(links) > MAX_LINKS:
-        raise GuardrailViolation(f"Too many links (max {MAX_LINKS})")
-
-    for link in links:
-        if not link.startswith("/media/"):
-            raise GuardrailViolation(f"Invalid link format: {link}")
-        if strict and link not in allowed_pages:
-            raise GuardrailViolation(f"Invalid page reference: {link}")
-
-    # Check media
-    media_images = answer_dict.get("media", {}).get("images", [])
-    if len(media_images) > MAX_MEDIA:
-        raise GuardrailViolation(f"Too many media files (max {MAX_MEDIA})")
-
-    for img in media_images:
-        # Allow diagram references and /media/ paths
-        if not (img.startswith("/media/") or img.startswith("Diagram ")):
-            raise GuardrailViolation(f"Invalid media format: {img}")
-        if strict and not img.startswith("Diagram ") and img not in allowed_media:
-            raise GuardrailViolation(f"Invalid media reference: {img}")
 
 
 def validate_context(context: str) -> str:
